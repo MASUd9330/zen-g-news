@@ -66,16 +66,19 @@ export default async function HomePage() {
           <section className="mb-10 pb-8 border-b border-[var(--border-color)]">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Link href={`/article/${hero.slug}`} className="lg:col-span-2 group block">
-                <div className="relative aspect-[16/10] overflow-hidden rounded bg-neutral-200 dark:bg-neutral-800 mb-4">
-                  {hero.featured_image && (
-                    <Image
+                <div className="relative aspect-[16/10] overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900 mb-4">
+                  {hero.featured_image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
                       src={hero.featured_image}
                       alt={hero.title}
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 66vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="eager"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="headline-font text-3xl font-black tracking-tight opacity-20 text-neutral-700 dark:text-neutral-300">ZEN-G<span className="text-[var(--accent)]">.</span>NEWS</div>
+                    </div>
                   )}
                   {hero.categories && (
                     <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] uppercase font-bold rounded bg-[var(--accent)] text-white">
@@ -101,10 +104,11 @@ export default async function HomePage() {
               <div className="flex flex-col gap-4">
                 {sideStories.map((a) => (
                   <Link key={a.id} href={`/article/${a.slug}`} className="group flex gap-3 pb-4 border-b border-[var(--border-color)] last:border-0">
-                    <div className="relative w-24 h-20 shrink-0 overflow-hidden rounded bg-neutral-200 dark:bg-neutral-800">
-                      {a.featured_image && (
-                        <Image src={a.featured_image} alt={a.title} fill sizes="96px" className="object-cover transition-transform duration-200 group-hover:scale-105" />
-                      )}
+                    <div className="relative w-24 h-20 shrink-0 overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
+                      {a.featured_image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={a.featured_image} alt={a.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
+                      ) : null}
                     </div>
                     <div className="flex-1 min-w-0">
                       {a.categories && (

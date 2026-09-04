@@ -133,13 +133,23 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             <AdSlot placement={topAd} />
 
-            {article.featured_image && (
-              <figure className="mb-6 -mx-4 sm:mx-0">
-                <div className="relative aspect-[16/9] overflow-hidden rounded sm:rounded-lg bg-neutral-200 dark:bg-neutral-800">
-                  <Image src={article.featured_image} alt={article.title} fill priority sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover" />
-                </div>
-              </figure>
-            )}
+            <figure className="mb-6 -mx-4 sm:mx-0">
+              <div className="relative aspect-[16/9] overflow-hidden rounded sm:rounded-lg bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:bg-neutral-900">
+                {article.featured_image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={article.featured_image}
+                    alt={article.title}
+                    loading="eager"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="headline-font text-3xl font-black tracking-tight opacity-20 text-neutral-700 dark:text-neutral-300">ZEN-G<span className="text-[var(--accent)]">.</span>NEWS</div>
+                  </div>
+                )}
+              </div>
+            </figure>
 
             <div
               className="prose prose-lg dark:prose-invert max-w-none 
@@ -165,10 +175,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {related.slice(0, 4).map((r) => (
                     <Link key={r.id} href={`/article/${r.slug}`} className="group flex gap-3">
-                      <div className="relative w-28 h-20 shrink-0 overflow-hidden rounded bg-neutral-200 dark:bg-neutral-800">
-                        {r.featured_image && (
-                          <Image src={r.featured_image} alt={r.title} fill sizes="112px" className="object-cover transition-transform duration-200 group-hover:scale-105" />
-                        )}
+                      <div className="relative w-28 h-20 shrink-0 overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
+                        {r.featured_image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={r.featured_image} alt={r.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
+                        ) : null}
                       </div>
                       <div className="flex-1 min-w-0">
                         {r.categories && <span className="text-[10px] uppercase font-bold text-[var(--accent)]">{r.categories.name}</span>}

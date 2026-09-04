@@ -6,14 +6,23 @@ export default function ArticleCard({ title, slug, excerpt, featured_image, cate
   return (
     <article className="group flex flex-col justify-between h-full">
       <div>
-        <Link href={`/article/${slug}`} className="block relative aspect-[16/10] overflow-hidden rounded bg-neutral-800 mb-3">
+        <Link href={`/article/${slug}`} className="block relative aspect-[16/10] overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900 mb-3">
           {featured_image ? (
-            <Image src={featured_image} alt={title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={featured_image}
+              alt={title}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+            />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-neutral-500 text-xs">Zen-G News</div>
+            <div className="w-full h-full flex flex-col items-center justify-center text-neutral-500 dark:text-neutral-600">
+              <div className="headline-font text-lg font-black tracking-tight opacity-30">ZEN-G<span className="text-[var(--accent)]">.</span>NEWS</div>
+              <span className="text-[10px] uppercase tracking-widest mt-1">No image</span>
+            </div>
           )}
           {category && (
-            <span className="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] uppercase font-bold rounded bg-neutral-900/80 text-white">
+            <span className="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] uppercase font-bold rounded bg-neutral-900/85 text-white backdrop-blur">
               {category.name}
             </span>
           )}
