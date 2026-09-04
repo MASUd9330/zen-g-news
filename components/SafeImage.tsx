@@ -3,11 +3,6 @@ import { useState } from 'react';
 
 const PLACEHOLDER = '/placeholder.svg';
 
-function picsumUrl(seed: string, w = 1200, h = 750) {
-  // Picsum gives a deterministic random image based on the seed
-  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${w}/${h}`;
-}
-
 export default function SafeImage({
   src,
   alt,
@@ -15,6 +10,7 @@ export default function SafeImage({
   className,
   loading = 'lazy',
   sizes,
+  categoryImage,
 }: {
   src?: string | null;
   alt: string;
@@ -22,10 +18,21 @@ export default function SafeImage({
   className?: string;
   loading?: 'lazy' | 'eager';
   sizes?: string;
+  categoryImage?: string;
 }) {
   const [errored, setErrored] = useState(false);
-  const fallback = seed ? picsumUrl(seed) : PLACEHOLDER;
-  const finalSrc = !src || errored ? fallback : src;
+
+  // Priority: real src → category-specific Unsplash → Picsum → placeholder
+  let finalSrc: string;
+  if (src && !errored) {
+    finalSrc = src;
+  } else if (categoryImage && !errored) {
+    finalSrc = categoryImage;
+  } else if (seed) {
+    finalSrc = `https://picsum.photos/seed/${encodeURIComponent(seed)}/1200/750`;
+  } else {
+    finalSrc = PLACEHOLDER;
+  }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element

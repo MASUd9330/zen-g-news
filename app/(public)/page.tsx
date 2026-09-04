@@ -8,6 +8,7 @@ import SafeImage from '@/components/SafeImage';
 import AdSlot from '@/components/AdSlot';
 import NewsDivider from '@/components/NewsDivider';
 import LastUpdated from '@/components/LastUpdated';
+import { imageForArticle } from '@/lib/images';
 import Link from 'next/link';
 import { Clock, ArrowRight } from 'lucide-react';
 
@@ -79,6 +80,7 @@ export default async function HomePage() {
                   <SafeImage
                     src={hero.featured_image}
                     seed={hero.slug}
+                    categoryImage={imageForArticle({ slug: hero.slug, categories: hero.categories })}
                     alt={hero.title}
                     loading="eager"
                     sizes="(max-width: 1024px) 100vw, 66vw"
@@ -109,7 +111,7 @@ export default async function HomePage() {
                 {sideStories.map((a) => (
                   <Link key={a.id} href={`/article/${a.slug}`} className="group flex gap-3 pb-4 border-b border-[var(--border-color)] last:border-0">
                     <div className="relative w-24 h-20 shrink-0 overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
-                      <SafeImage src={a.featured_image} seed={a.slug} alt={a.title} loading="lazy" sizes="96px" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
+                      <SafeImage src={a.featured_image} seed={a.slug} categoryImage={imageForArticle({ slug: a.slug, categories: a.categories })} alt={a.title} loading="lazy" sizes="96px" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
                     </div>
                     <div className="flex-1 min-w-0">
                       {a.categories && (

@@ -5,6 +5,7 @@ import BreakingNewsTicker from '@/components/BreakingNewsTicker';
 import ShareButtons from '@/components/ShareButtons';
 import SafeImage from '@/components/SafeImage';
 import AdSlot from '@/components/AdSlot';
+import { imageForArticle } from '@/lib/images';
 import Link from 'next/link';
 import { Clock, User, Calendar, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -77,6 +78,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   if (!article) notFound();
 
+  const articleImage = imageForArticle({ slug: article.slug, categories: article.categories, featured_image: article.featured_image });
+
   const sidebarAd = ads?.find((a) => a.placement_key === 'article_sidebar');
   const inlineAd = ads?.find((a) => a.placement_key === 'article_inline');
   const topAd = ads?.find((a) => a.placement_key === 'article_top');
@@ -138,6 +141,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <SafeImage
                   src={article.featured_image}
                   seed={article.slug}
+                  categoryImage={articleImage}
                   alt={article.title}
                   loading="eager"
                   sizes="(max-width: 1024px) 100vw, 66vw"

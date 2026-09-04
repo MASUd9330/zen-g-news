@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import SafeImage from './SafeImage';
+import { imageForArticle } from '@/lib/images';
 import { Clock } from 'lucide-react';
 
 export default function ArticleCard({ title, slug, excerpt, featured_image, category, author_name, reading_time_minutes = 2, compact = false }: any) {
+  const catImage = imageForArticle({ slug, category_id: undefined, categories: category, featured_image: undefined });
   return (
     <article className="group flex flex-col justify-between h-full">
       <div>
@@ -10,6 +12,7 @@ export default function ArticleCard({ title, slug, excerpt, featured_image, cate
           <SafeImage
             src={featured_image}
             seed={slug}
+            categoryImage={catImage}
             alt={title}
             loading="lazy"
             sizes="(max-width: 768px) 100vw, 33vw"
