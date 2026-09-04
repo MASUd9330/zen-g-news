@@ -3,9 +3,9 @@ import Header from '@/components/Header';
 import BreakingNewsTicker from '@/components/BreakingNewsTicker';
 import TrendingList from '@/components/TrendingList';
 import ArticleCard from '@/components/ArticleCard';
+import SafeImage from '@/components/SafeImage';
 import AdSlot from '@/components/AdSlot';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
 
 export const revalidate = 60;
@@ -67,19 +67,13 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Link href={`/article/${hero.slug}`} className="lg:col-span-2 group block">
                 <div className="relative aspect-[16/10] overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900 mb-4">
-                  {hero.featured_image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={hero.featured_image}
-                      alt={hero.title}
-                      loading="eager"
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="headline-font text-3xl font-black tracking-tight opacity-20 text-neutral-700 dark:text-neutral-300">ZEN-G<span className="text-[var(--accent)]">.</span>NEWS</div>
-                    </div>
-                  )}
+                  <SafeImage
+                    src={hero.featured_image}
+                    alt={hero.title}
+                    loading="eager"
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                   {hero.categories && (
                     <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] uppercase font-bold rounded bg-[var(--accent)] text-white">
                       {hero.categories.name}
@@ -105,10 +99,7 @@ export default async function HomePage() {
                 {sideStories.map((a) => (
                   <Link key={a.id} href={`/article/${a.slug}`} className="group flex gap-3 pb-4 border-b border-[var(--border-color)] last:border-0">
                     <div className="relative w-24 h-20 shrink-0 overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
-                      {a.featured_image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={a.featured_image} alt={a.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
-                      ) : null}
+                      <SafeImage src={a.featured_image} alt={a.title} loading="lazy" sizes="96px" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
                     </div>
                     <div className="flex-1 min-w-0">
                       {a.categories && (

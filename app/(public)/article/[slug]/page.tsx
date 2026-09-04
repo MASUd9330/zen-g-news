@@ -3,8 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import Header from '@/components/Header';
 import BreakingNewsTicker from '@/components/BreakingNewsTicker';
 import ShareButtons from '@/components/ShareButtons';
+import SafeImage from '@/components/SafeImage';
 import AdSlot from '@/components/AdSlot';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Clock, User, Calendar, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -134,20 +134,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <AdSlot placement={topAd} />
 
             <figure className="mb-6 -mx-4 sm:mx-0">
-              <div className="relative aspect-[16/9] overflow-hidden rounded sm:rounded-lg bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:bg-neutral-900">
-                {article.featured_image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={article.featured_image}
-                    alt={article.title}
-                    loading="eager"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="headline-font text-3xl font-black tracking-tight opacity-20 text-neutral-700 dark:text-neutral-300">ZEN-G<span className="text-[var(--accent)]">.</span>NEWS</div>
-                  </div>
-                )}
+              <div className="relative aspect-[16/9] overflow-hidden rounded sm:rounded-lg bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
+                <SafeImage
+                  src={article.featured_image}
+                  alt={article.title}
+                  loading="eager"
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </figure>
 
@@ -176,10 +170,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   {related.slice(0, 4).map((r) => (
                     <Link key={r.id} href={`/article/${r.slug}`} className="group flex gap-3">
                       <div className="relative w-28 h-20 shrink-0 overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
-                        {r.featured_image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={r.featured_image} alt={r.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
-                        ) : null}
+                        <SafeImage src={r.featured_image} alt={r.title} loading="lazy" sizes="112px" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
                       </div>
                       <div className="flex-1 min-w-0">
                         {r.categories && <span className="text-[10px] uppercase font-bold text-[var(--accent)]">{r.categories.name}</span>}

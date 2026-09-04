@@ -5,10 +5,29 @@ import crypto from 'crypto';
 import sanitizeHtml from 'sanitize-html';
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-const rss = new Parser();
+const rss = new Parser({ timeout: 15000 });
+
+// Extract first image URL from HTML content
+function extractImage(html: string): string | null {
+  if (!html) return null;
+  const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (!m) return null;
+  let url = m[1];
+  // Strip query params that often break (esp. BBC, Reuters)
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('bbci.co.uk') || u.hostname.includes('reuters')) {
+      // Keep url as-is for these (they work with query params)
+    }
+    return u.href;
+  } catch {
+    return null;
+  }
+}
 
 export const handler = schedule('*/5 * * * *', async () => {
   const { data: sources } = await supabase.from('sources').select('*').eq('active', true);
+  let total = 0;
   for (const src of sources ?? []) {
     try {
       const feed = await rss.parseURL(src.endpoint_url);
@@ -18,29 +37,34 @@ export const handler = schedule('*/5 * * * *', async () => {
         const { data: dup } = await supabase.from('articles').select('id').eq('dedup_hash', hash).maybeSingle();
         if (dup) continue;
 
-        const content = sanitizeHtml(item['content:encoded'] || item.content || item.summary || '');
-        const slug = item.title.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 80) + '-' + Math.random().toString(36).substring(2, 6);
+        const contentHtml = item['content:encoded'] || item.content || item.summary || '';
+        const content = sanitizeHtml(contentHtml, { allowedTags: ['p','br','h2','h3','h4','strong','em','ul','ol','li','a','img','blockquote','figure','figcaption'], allowedAttributes: { a: ['href','title'], img: ['src','alt','width','height'] } });
+        const slug = (item.title.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 80) || 'article') + '-' + Math.random().toString(36).substring(2, 6);
+
+        // Try enclosure first, then content
+        const featured_image = item.enclosure?.url || extractImage(contentHtml) || null;
 
         await supabase.from('articles').insert({
-          title: item.title.trim(),
+          title: item.title.trim().slice(0, 280),
           slug,
-          excerpt: sanitizeHtml(content, { allowedTags: [] }).slice(0, 260),
+          excerpt: sanitizeHtml(contentHtml, { allowedTags: [] }).slice(0, 260).trim(),
           content,
-          featured_image: item.enclosure?.url || null,
+          featured_image,
           category_id: src.default_category_id,
           source_id: src.id,
           source_url: item.link,
-          author_name: src.name,
-          reading_time_minutes: Math.max(1, Math.ceil(content.split(/\s+/).length / 200)),
+          author_name: item.creator || item.author || src.name,
+          reading_time_minutes: Math.max(1, Math.ceil((contentHtml.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length) / 200)),
           status: src.auto_publish_trusted ? 'published' : 'draft',
           dedup_hash: hash,
-          published_at: src.auto_publish_trusted ? new Date().toISOString() : null
+          published_at: src.auto_publish_trusted ? new Date().toISOString() : null,
         });
+        total++;
       }
       await supabase.from('sources').update({ last_polled_at: new Date().toISOString(), last_error: null }).eq('id', src.id);
     } catch (e: any) {
-      await supabase.from('sources').update({ last_error: e.message, last_polled_at: new Date().toISOString() }).eq('id', src.id);
+      await supabase.from('sources').update({ last_error: e.message?.slice(0, 200) || 'unknown', last_polled_at: new Date().toISOString() }).eq('id', src.id);
     }
   }
-  return { statusCode: 200 };
+  return { statusCode: 200, body: JSON.stringify({ ok: true, ingested: total }) };
 });
