@@ -40,6 +40,8 @@ export default async function Footer() {
             <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-900 dark:text-white mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-neutral-500">
               <li><Link href="/about" className="hover:text-[var(--accent)]">About</Link></li>
+              <li><Link href="/editorial" className="hover:text-[var(--accent)]">Editorial Policy</Link></li>
+              <li><Link href="/corrections" className="hover:text-[var(--accent)]">Corrections</Link></li>
               <li><Link href="/contact" className="hover:text-[var(--accent)]">Contact</Link></li>
               <li><Link href="/privacy" className="hover:text-[var(--accent)]">Privacy Policy</Link></li>
               <li><Link href="/terms" className="hover:text-[var(--accent)]">Terms of Service</Link></li>

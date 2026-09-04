@@ -41,8 +41,9 @@ export const handler = schedule('*/5 * * * *', async () => {
         const content = sanitizeHtml(contentHtml, { allowedTags: ['p','br','h2','h3','h4','strong','em','ul','ol','li','a','img','blockquote','figure','figcaption'], allowedAttributes: { a: ['href','title'], img: ['src','alt','width','height'] } });
         const slug = (item.title.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 80) || 'article') + '-' + Math.random().toString(36).substring(2, 6);
 
-        // Try enclosure first, then content
-        const featured_image = item.enclosure?.url || extractImage(contentHtml) || null;
+        // Try enclosure first, then content, then Picsum fallback
+        const realImage = item.enclosure?.url || extractImage(contentHtml) || null;
+        const featured_image = realImage || `https://picsum.photos/seed/${encodeURIComponent(slug)}/1200/750`;
 
         await supabase.from('articles').insert({
           title: item.title.trim().slice(0, 280),

@@ -137,6 +137,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <div className="relative aspect-[16/9] overflow-hidden rounded sm:rounded-lg bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
                 <SafeImage
                   src={article.featured_image}
+                  seed={article.slug}
                   alt={article.title}
                   loading="eager"
                   sizes="(max-width: 1024px) 100vw, 66vw"
@@ -170,7 +171,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   {related.slice(0, 4).map((r) => (
                     <Link key={r.id} href={`/article/${r.slug}`} className="group flex gap-3">
                       <div className="relative w-28 h-20 shrink-0 overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900">
-                        <SafeImage src={r.featured_image} alt={r.title} loading="lazy" sizes="112px" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
+                        <SafeImage src={r.featured_image} seed={r.slug} alt={r.title} loading="lazy" sizes="112px" className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
                       </div>
                       <div className="flex-1 min-w-0">
                         {r.categories && <span className="text-[10px] uppercase font-bold text-[var(--accent)]">{r.categories.name}</span>}

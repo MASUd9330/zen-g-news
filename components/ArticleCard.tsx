@@ -9,6 +9,7 @@ export default function ArticleCard({ title, slug, excerpt, featured_image, cate
         <Link href={`/article/${slug}`} className="block relative aspect-[16/10] overflow-hidden rounded bg-gradient-to-br from-neutral-200 to-neutral-300 dark:from-neutral-800 dark:to-neutral-900 mb-3">
           <SafeImage
             src={featured_image}
+            seed={slug}
             alt={title}
             loading="lazy"
             sizes="(max-width: 768px) 100vw, 33vw"
