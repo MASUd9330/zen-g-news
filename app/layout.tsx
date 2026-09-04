@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Source_Serif_4 } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import Footer from '@/components/Footer';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className={`${inter.variable} ${serif.variable} antialiased min-h-screen flex flex-col`}>
         {children}
+        <Footer />
       </body>
     </html>
   );
