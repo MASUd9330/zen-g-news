@@ -17,13 +17,14 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
   const theme = cookieStore.get('zg_theme')?.value || 'system';
+  const lang = cookieStore.get('zg_lang')?.value === 'bn' ? 'bn' : 'en';
 
   const supabase = await createClient();
   const { data: setting } = await supabase.from('site_settings').select('value').eq('key', 'branding').single();
   const accentColor = setting?.value?.accent_color || '#2563EB';
 
   return (
-    <html lang="en" className={theme === 'dark' ? 'dark' : ''}>
+    <html lang={lang} className={theme === 'dark' ? 'dark' : ''}>
       <head>
         <style dangerouslySetInnerHTML={{ __html: `:root { --accent: ${accentColor}; }` }} />
       </head>

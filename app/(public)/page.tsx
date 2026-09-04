@@ -1,10 +1,13 @@
 import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 import Header from '@/components/Header';
 import BreakingNewsTicker from '@/components/BreakingNewsTicker';
 import TrendingList from '@/components/TrendingList';
 import ArticleCard from '@/components/ArticleCard';
 import SafeImage from '@/components/SafeImage';
 import AdSlot from '@/components/AdSlot';
+import NewsDivider from '@/components/NewsDivider';
+import LastUpdated from '@/components/LastUpdated';
 import Link from 'next/link';
 import { Clock, ArrowRight } from 'lucide-react';
 
@@ -24,6 +27,8 @@ function timeAgo(iso?: string) {
 
 export default async function HomePage() {
   const supabase = await createClient();
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get('zg_lang')?.value === 'bn' ? 'bn' : 'en') as 'en' | 'bn';
   const [
     { data: categories },
     { data: allArticles },
@@ -32,10 +37,10 @@ export default async function HomePage() {
   ] = await Promise.all([
     supabase.from('categories').select('*').eq('is_active', true).order('sort_order', { ascending: true }),
     supabase.from('articles')
-      .select('*, categories(name, slug)')
+      .select('*, categories(name, slug, name_bn)')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
-      .limit(24),
+      .limit(36),
     supabase.from('articles')
       .select('*, categories(name, slug)')
       .eq('status', 'published')
@@ -44,6 +49,9 @@ export default async function HomePage() {
       .limit(5),
     supabase.from('ad_placements').select('*').eq('is_active', true),
   ]);
+
+  const catName = (c: any) => lang === 'bn' && c?.name_bn ? c.name_bn : c?.name;
+  const lastUpdated = allArticles?.[0]?.published_at;
 
   const topAd = ads?.find(a => a.placement_key === 'homepage_top');
   const middleAd = ads?.find(a => a.placement_key === 'homepage_middle');
@@ -60,6 +68,7 @@ export default async function HomePage() {
       <BreakingNewsTicker />
       <main className="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
         <AdSlot placement={headerAd} />
+        <div className="mb-4"><LastUpdated iso={lastUpdated} lang={lang} /></div>
 
         {/* HERO SECTION */}
         {hero && (
@@ -77,7 +86,7 @@ export default async function HomePage() {
                   />
                   {hero.categories && (
                     <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] uppercase font-bold rounded bg-[var(--accent)] text-white">
-                      {hero.categories.name}
+                      {catName(hero.categories)}
                     </span>
                   )}
                 </div>
@@ -104,7 +113,7 @@ export default async function HomePage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       {a.categories && (
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--accent)]">{a.categories.name}</span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--accent)]">{catName(a.categories)}</span>
                       )}
                       <h3 className="text-sm font-semibold leading-snug line-clamp-3 group-hover:text-[var(--accent)] transition-colors mt-1">{a.title}</h3>
                       <span className="text-[11px] text-neutral-500 mt-1 inline-block">{timeAgo(a.published_at)}</span>
@@ -118,6 +127,8 @@ export default async function HomePage() {
 
         {/* TRENDING */}
         {trending && trending.length > 0 && <TrendingList items={trending} />}
+
+        <NewsDivider label={lang === 'bn' ? 'সর্বশেষ' : 'Latest'} />
 
         {/* LATEST NEWS */}
         {latest.length > 0 && (
@@ -139,15 +150,15 @@ export default async function HomePage() {
         <AdSlot placement={middleAd} />
 
         {/* CATEGORY SECTIONS */}
-        {(categories || []).slice(0, 4).map((cat) => {
+        {(categories || []).slice(0, 6).map((cat) => {
           const sectionArticles = (allArticles || []).filter(a => a.category_id === cat.id).slice(0, 4);
           if (sectionArticles.length === 0) return null;
           return (
             <section key={cat.id} className="py-10 border-t border-[var(--border-color)]">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="headline-font text-2xl font-black tracking-tight">{cat.name}</h2>
+                <h2 className="headline-font text-2xl font-black tracking-tight">{catName(cat)}</h2>
                 <Link href={`/category/${cat.slug}`} className="text-xs font-semibold text-[var(--accent)] inline-flex items-center gap-1 hover:gap-2 transition-all">
-                  View all <ArrowRight className="w-3 h-3" />
+                  {lang === 'bn' ? 'সব দেখুন' : 'View all'} <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

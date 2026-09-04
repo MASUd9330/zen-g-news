@@ -19,6 +19,14 @@
   --border-color: #1E293B;
 }
 
+/* Bangla font stack — falls back to system Bangla fonts if SolaimanLipi isn't available */
+[lang="bn"] {
+  font-family: 'SolaimanLipi', 'Hind Siliguri', 'Noto Sans Bengali', 'Kalpurush', Vrinda, SolaimanLipi, system-ui, sans-serif;
+}
+[lang="bn"] .headline-font {
+  font-family: 'SolaimanLipi', 'Hind Siliguri', 'Noto Sans Bengali', 'Kalpurush', Vrinda, system-ui, serif;
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);

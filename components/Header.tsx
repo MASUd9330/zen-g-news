@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import LanguageToggle from './LanguageToggle';
 import { Search, Moon, Sun, Menu, X, ChevronDown, Rss } from 'lucide-react';
 
 export default function Header({ categories = [] }: { categories: any[] }) {
@@ -50,6 +51,7 @@ export default function Header({ categories = [] }: { categories: any[] }) {
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             <Link href="/rss.xml" className="hover:text-[var(--accent)]" aria-label="RSS">
               <Rss className="w-3.5 h-3.5" />
             </Link>

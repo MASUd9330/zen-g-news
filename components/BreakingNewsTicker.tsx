@@ -26,7 +26,7 @@ export default async function BreakingNewsTicker() {
   if (active.length === 0) return null;
 
   return (
-    <div className="w-full bg-red-600 text-white border-b border-red-700 sticky top-16 z-30">
+    <div className="w-full bg-red-600 text-white border-b border-red-700 sticky top-16 z-30 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 h-10 flex items-center gap-3 overflow-hidden">
         <span className="shrink-0 inline-flex items-center gap-2 px-2.5 py-1 bg-white text-red-600 text-[10px] font-black uppercase tracking-widest rounded animate-pulse">
           <span className="w-1.5 h-1.5 bg-red-600 rounded-full"></span>
